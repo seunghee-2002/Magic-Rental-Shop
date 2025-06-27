@@ -41,6 +41,14 @@ namespace MagicRentalShop.Data
         // public List<string> purchasedWeaponIDs; // 오늘 구매한 무기 (새로고침용)
         // public List<string> unlockedRecipeIDs;  // 해금된 레시피
         
+        public PlayerData()
+        {
+            ownedWeapons = new List<WeaponInstance>();
+            ownedMaterials = new List<MaterialInstance>();
+            
+            Debug.Log("PlayerData: 생성자에서 리스트 초기화 완료");
+        }
+
         /// <summary>
         /// PlayerData 초기화 (새 게임 시작 시)
         /// </summary>

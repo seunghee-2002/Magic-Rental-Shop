@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: GameConfig
   m_EditorClassIdentifier: 
   startingGold: 5000
-  dayDuration: 10
+  dayDuration: 20
   blacksmithUnlockDay: 10
   weaponShopItemCount: 5
   inventoryMaxSize: 100

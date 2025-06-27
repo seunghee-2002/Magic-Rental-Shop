@@ -1301,7 +1301,7 @@ MonoBehaviour:
   weaponTabButton: {fileID: 1340955443}
   materialTabButton: {fileID: 1893235772}
   weaponContentRoot: {fileID: 1638469405}
-  materialContentRoot: {fileID: 1830364260}
+  materialContentRoot: {fileID: 1211319375}
   weaponPageNavigation: {fileID: 0}
   materialPageNavigation: {fileID: 0}
   managementModeIndicator: {fileID: 0}
