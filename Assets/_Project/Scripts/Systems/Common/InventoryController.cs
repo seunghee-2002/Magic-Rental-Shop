@@ -35,6 +35,7 @@ namespace MagicRentalShop.Systems.Common
             if (Instance == null)
             {
                 Instance = this;
+                transform.parent = null; // 루트 오브젝트로 이동
                 DontDestroyOnLoad(gameObject);
             }
             else
@@ -62,6 +63,12 @@ namespace MagicRentalShop.Systems.Common
         /// <returns>생성된 WeaponInstance</returns>
         public WeaponInstance AddWeapon(WeaponData weaponData, int quantity = 1)
         {
+            if (playerData == null)
+            {
+                Debug.LogWarning("InventoryController: PlayerData가 아직 초기화되지 않았습니다.");
+                return null;
+            }
+            
             if (weaponData == null)
             {
                 Debug.LogError("InventoryController: weaponData가 null입니다.");
@@ -107,6 +114,12 @@ namespace MagicRentalShop.Systems.Common
         /// <returns>제거 성공 여부</returns>
         public bool RemoveWeapon(WeaponInstance weapon, int quantity = 1)
         {
+            if (playerData == null)
+            {
+                Debug.LogWarning("InventoryController: PlayerData가 아직 초기화되지 않았습니다.");
+                return false;
+            }
+            
             if (weapon == null || !playerData.ownedWeapons.Contains(weapon))
             {
                 Debug.LogWarning("InventoryController: 제거할 무기를 찾을 수 없습니다.");
@@ -137,6 +150,12 @@ namespace MagicRentalShop.Systems.Common
         /// <returns>무기 목록</returns>
         public List<WeaponInstance> GetAllWeapons()
         {
+            if (playerData?.ownedWeapons == null)
+            {
+                Debug.LogWarning("InventoryController: PlayerData가 아직 초기화되지 않았습니다.");
+                return new List<WeaponInstance>();
+            }
+            
             return new List<WeaponInstance>(playerData.ownedWeapons);
         }
         
@@ -148,6 +167,12 @@ namespace MagicRentalShop.Systems.Common
         /// <returns>필터링된 무기 목록</returns>
         public List<WeaponInstance> GetWeapons(Grade? grade = null, Element? element = null)
         {
+            if (playerData == null)
+            {
+                Debug.LogWarning("InventoryController: PlayerData가 아직 초기화되지 않았습니다.");
+                return new List<WeaponInstance>();
+            }
+            
             var weapons = playerData.ownedWeapons.AsEnumerable();
             
             if (grade.HasValue)
@@ -166,6 +191,12 @@ namespace MagicRentalShop.Systems.Common
         /// <returns>찾은 무기 (없으면 null)</returns>
         public WeaponInstance GetWeaponByInstanceID(string weaponInstanceID)
         {
+            if (playerData == null)
+            {
+                Debug.LogWarning("InventoryController: PlayerData가 아직 초기화되지 않았습니다.");
+                return null;
+            }
+            
             return playerData.ownedWeapons.FirstOrDefault(w => w.uniqueID == weaponInstanceID);
         }
         
@@ -176,7 +207,7 @@ namespace MagicRentalShop.Systems.Common
         /// <returns>보유 수량</returns>
         public int GetWeaponQuantity(WeaponData weaponData)
         {
-            if (weaponData == null)
+            if (playerData == null)
                 return 0;
             
             WeaponInstance weapon = playerData.ownedWeapons
@@ -193,6 +224,9 @@ namespace MagicRentalShop.Systems.Common
         /// <returns>대여 가능하면 true</returns>
         public bool CanRentWeapon(WeaponData weaponData, int requiredQuantity = 1)
         {
+            if (playerData == null)
+                return false;
+            
             return GetWeaponQuantity(weaponData) >= requiredQuantity;
         }
         
@@ -208,6 +242,12 @@ namespace MagicRentalShop.Systems.Common
         /// <returns>업데이트된 MaterialInstance</returns>
         public MaterialInstance AddMaterial(MaterialData materialData, int quantity = 1)
         {
+            if (playerData == null)
+            {
+                Debug.LogWarning("InventoryController: PlayerData가 아직 초기화되지 않았습니다.");
+                return null;
+            }
+            
             if (materialData == null || quantity <= 0)
             {
                 Debug.LogError("InventoryController: 잘못된 재료 데이터 또는 수량입니다.");
@@ -252,6 +292,9 @@ namespace MagicRentalShop.Systems.Common
         /// <returns>실제로 소모된 수량</returns>
         public int ConsumeMaterial(MaterialData materialData, int quantity)
         {
+            if (playerData == null)
+                return 0;
+            
             if (materialData == null || quantity <= 0)
                 return 0;
             
@@ -285,7 +328,7 @@ namespace MagicRentalShop.Systems.Common
         /// <returns>보유 수량</returns>
         public int GetMaterialQuantity(MaterialData materialData)
         {
-            if (materialData == null)
+            if (playerData == null)
                 return 0;
             
             MaterialInstance material = playerData.ownedMaterials
@@ -302,6 +345,9 @@ namespace MagicRentalShop.Systems.Common
         /// <returns>제작 가능하면 true</returns>
         public bool CanCraftWithMaterial(MaterialData materialData, int requiredQuantity)
         {
+            if (playerData == null)
+                return false;
+            
             return GetMaterialQuantity(materialData) >= requiredQuantity;
         }
         
@@ -311,6 +357,12 @@ namespace MagicRentalShop.Systems.Common
         /// <returns>재료 목록</returns>
         public List<MaterialInstance> GetAllMaterials()
         {
+            // PlayerData가 아직 초기화되지 않았으면 빈 리스트 반환
+            if (playerData?.ownedMaterials == null)
+            {
+                Debug.LogWarning("InventoryController: PlayerData가 아직 초기화되지 않았습니다.");
+                return new List<MaterialInstance>();
+            }
             return new List<MaterialInstance>(playerData.ownedMaterials);
         }
         
@@ -324,6 +376,9 @@ namespace MagicRentalShop.Systems.Common
         /// <returns>전체 아이템 개수</returns>
         public int GetTotalItemCount()
         {
+            if (playerData == null)
+                return 0;
+            
             return playerData.ownedWeapons.Count + playerData.ownedMaterials.Count;
         }
         
@@ -333,6 +388,9 @@ namespace MagicRentalShop.Systems.Common
         /// <returns>여유 공간</returns>
         public int GetRemainingSpace()
         {
+            if (playerData == null)
+                return maxInventorySize;
+            
             return maxInventorySize - GetTotalItemCount();
         }
         
@@ -342,6 +400,9 @@ namespace MagicRentalShop.Systems.Common
         /// <returns>가득 찼으면 true</returns>
         public bool IsInventoryFull()
         {
+            if (playerData == null)
+                return false;
+            
             return GetTotalItemCount() >= maxInventorySize;
         }
         
@@ -353,6 +414,9 @@ namespace MagicRentalShop.Systems.Common
         /// <returns>판매 가격</returns>
         public int CalculateSellPrice(WeaponInstance weapon)
         {
+            if (playerData == null)
+                return 0;
+            
             return weapon?.SellPrice ?? 0;
         }
         
@@ -364,7 +428,8 @@ namespace MagicRentalShop.Systems.Common
         /// <returns>판매 가격</returns>
         public int SellWeapon(WeaponInstance weapon)
         {
-            if (weapon == null) return 0;
+            if (playerData == null)
+                return 0;
             
             int sellPrice = CalculateSellPrice(weapon);
             if (RemoveWeapon(weapon))
@@ -383,6 +448,12 @@ namespace MagicRentalShop.Systems.Common
         [ContextMenu("Debug Inventory")]
         public void DebugInventory()
         {
+            if (playerData == null)
+            {
+                Debug.LogWarning("InventoryController: PlayerData가 아직 초기화되지 않았습니다.");
+                return;
+            }
+            
             Debug.Log($"=== 인벤토리 상태 ({GetTotalItemCount()}/{maxInventorySize}) ===");
             Debug.Log($"무기 ({playerData.ownedWeapons.Count}개):");
             foreach (var weapon in playerData.ownedWeapons)
@@ -395,6 +466,12 @@ namespace MagicRentalShop.Systems.Common
             {
                 Debug.Log($"  - {material}");
             }
+        }
+        
+        // playerData 초기화 여부 확인용 메서드
+        public bool IsInitialized()
+        {
+            return playerData != null;
         }
         
         #endregion

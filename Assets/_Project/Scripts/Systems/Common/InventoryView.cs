@@ -195,6 +195,9 @@ namespace MagicRentalShop.UI.Common
         /// </summary>
         public void RefreshInventoryDisplay()
         {
+            // InventoryController가 없거나 초기화되지 않았으면 표시하지 않음
+            if (InventoryController.Instance == null || !InventoryController.Instance.IsInitialized())
+                return;
             RefreshWeaponDisplay();
             RefreshMaterialDisplay();
             UpdateDebugInfo();
@@ -216,18 +219,13 @@ namespace MagicRentalShop.UI.Common
         /// </summary>
         private void RefreshWeaponDisplay()
         {
-            // 기존 아이템들 정리
             ClearWeaponItems();
-            
-            if (InventoryController.Instance == null) return;
-            
+            if (InventoryController.Instance == null || !InventoryController.Instance.IsInitialized()) return;
             var weapons = InventoryController.Instance.GetAllWeapons();
-            
             foreach (var weapon in weapons)
             {
                 CreateWeaponItem(weapon);
             }
-            
             Debug.Log($"InventoryView: 무기 표시 새로고침 완료 ({weapons.Count}개)");
         }
         
@@ -236,18 +234,13 @@ namespace MagicRentalShop.UI.Common
         /// </summary>
         private void RefreshMaterialDisplay()
         {
-            // 기존 아이템들 정리
             ClearMaterialItems();
-            
-            if (InventoryController.Instance == null) return;
-            
+            if (InventoryController.Instance == null || !InventoryController.Instance.IsInitialized()) return;
             var materials = InventoryController.Instance.GetAllMaterials();
-            
             foreach (var material in materials)
             {
                 CreateMaterialItem(material);
             }
-            
             Debug.Log($"InventoryView: 재료 표시 새로고침 완료 ({materials.Count}종류)");
         }
         
@@ -393,13 +386,11 @@ namespace MagicRentalShop.UI.Common
         /// </summary>
         private void UpdateDebugInfo()
         {
-            if (debugInfoText == null || InventoryController.Instance == null) return;
-            
+            if (debugInfoText == null || InventoryController.Instance == null || !InventoryController.Instance.IsInitialized()) return;
             int weaponCount = InventoryController.Instance.GetAllWeapons().Count;
             int materialCount = InventoryController.Instance.GetAllMaterials().Count;
             int totalCount = InventoryController.Instance.GetTotalItemCount();
             int maxSize = InventoryController.Instance.maxInventorySize;
-            
             debugInfoText.text = $"인벤토리: {totalCount}/{maxSize}\n무기: {weaponCount}개, 재료: {materialCount}종류\n모드: {currentMode}";
         }
         
